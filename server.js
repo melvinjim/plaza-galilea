@@ -358,6 +358,9 @@ app.use('/api', (req, res) => res.status(404).json({ error: 'Ruta no encontrada.
 app.use((err, req, res, next) => {
   if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Solicitud no válida.' });
   console.error(err);
+  // Falta configuración: el mensaje dice qué, porque si no el error es opaco y
+  // no apunta a nada. No revela ningún dato, solo el nombre de la variable.
+  if (err.code === 'CONFIG') return res.status(503).json({ error: err.message });
   res.status(500).json({ error: 'Ocurrió un error en el servidor.' });
 });
 
