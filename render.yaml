@@ -1,17 +1,12 @@
+# Alternativa a Vercel. Ya no hace falta disco persistente (los datos viven en
+# PostgreSQL), así que el plan gratuito sirve. Ojo: en el plan gratuito Render
+# duerme el servicio tras unos minutos sin tráfico y la primera visita tarda.
 services:
   - type: web
     name: plaza-galilea
     runtime: node
     branch: main
-
-    # El plan gratuito NO admite disco persistente, y sin disco las
-    # reservas se borran en cada redespliegue. Este es el más pequeño
-    # con disco; a la app le sobra con 512 MB.
-    plan: 0.5c-512mb
-
-    # Ohio es la región más cercana a Colombia (las otras son Oregon,
-    # Virginia, Frankfurt y Singapur). No se puede cambiar después sin
-    # recrear el servicio.
+    plan: free
     region: ohio
 
     buildCommand: npm ci --omit=dev
@@ -19,20 +14,11 @@ services:
     healthCheckPath: /
 
     envVars:
-      # node:sqlite necesita Node 22.13 o superior.
       - key: NODE_VERSION
         value: "24"
 
-      # Debe coincidir con disk.mountPath.
-      - key: DATA_DIR
-        value: /var/data
-
-      # Render la pide al crear el blueprint; no queda escrita en el repo.
+      # Las dos se piden al crear el blueprint; no quedan escritas en el repo.
+      - key: DATABASE_URL
+        sync: false
       - key: ADMIN_PASSWORD
         sync: false
-
-    # Aquí vive galilea.db. Sobrevive a los redespliegues.
-    disk:
-      name: galilea-data
-      mountPath: /var/data
-      sizeGB: 1

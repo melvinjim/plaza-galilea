@@ -66,14 +66,15 @@ function adminView(r) {
   };
 }
 
-function baseUrl(req) {
-  return store.getSettings().publicUrl || `${req.protocol}://${req.get('host')}`;
+async function baseUrl(req, cfg) {
+  const settings = cfg || (await store.getSettings());
+  return settings.publicUrl || `${req.protocol}://${req.get('host')}`;
 }
 
 // --- API pública ----------------------------------------------------------
 
-app.get('/api/config', (req, res) => {
-  const cfg = store.getSettings();
+app.get('/api/config', async (req, res) => {
+  const cfg = await store.getSettings();
   res.json({
     today: now().date,
     whatsapp: cfg.whatsapp,
@@ -83,10 +84,10 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-app.get('/api/availability', (req, res) => {
+app.get('/api/availability', async (req, res) => {
   const { date } = req.query;
   if (!isDate(date)) return res.status(400).json({ error: 'Fecha no válida.' });
-  const day = dayAvailability(date);
+  const day = await dayAvailability(date);
   res.json({
     date,
     inRange: day.inRange,
@@ -98,14 +99,14 @@ app.get('/api/availability', (req, res) => {
   });
 });
 
-app.post('/api/reservations', (req, res) => {
+app.post('/api/reservations', async (req, res) => {
   const b = req.body || {};
   const bad = (error) => res.status(400).json({ error });
 
   // Campo trampa: los humanos no lo ven, los bots lo llenan.
   if (b.website) return bad('Solicitud no válida.');
 
-  const cfg = store.getSettings();
+  const cfg = await store.getSettings();
   const name = clean(b.name, 80);
   const phone = String(b.phone ?? '').replace(/\D/g, '');
   const email = clean(b.email, 120);
@@ -122,27 +123,45 @@ app.post('/api/reservations', (req, res) => {
   }
   if (!isDate(date) || !isTime(time)) return bad('Elige una fecha y una hora.');
 
-  // node:sqlite es síncrono: entre esta verificación y el INSERT no se cuela otra petición.
-  const slot = dayAvailability(date).slots.find((s) => s.time === time);
-  if (!slot || !slot.available) {
-    return res.status(409).json({ error: 'Ese horario ya no está disponible. Elige otro, por favor.', code: 'slot' });
-  }
-  const dup = store.findActiveByPhone(phone, date);
-  if (dup) {
-    return res.status(409).json({
-      error: `Ya tienes una reserva para ese día con el código ${dup.id}.`,
-      code: 'duplicate',
-      id: dup.id,
+  const duplicate = (id) => ({
+    error: `Ya tienes una reserva para ese día con el código ${id}.`,
+    code: 'duplicate',
+    id,
+  });
+
+  // Comprobar el cupo, comprobar el duplicado e insertar tienen que ser una
+  // sola operación: con la base remota, entre un paso y otro sí puede colarse
+  // otra petición. El cerrojo del día las pone en fila.
+  let outcome;
+  try {
+    outcome = await store.withDayLock(date, async (client) => {
+      const day = await dayAvailability(date, { client });
+      const slot = day.slots.find((s) => s.time === time);
+      if (!slot || !slot.available) {
+        return { conflict: { error: 'Ese horario ya no está disponible. Elige otro, por favor.', code: 'slot' } };
+      }
+      const dup = await store.findActiveByPhone(phone, date, client);
+      if (dup) return { conflict: duplicate(dup.id) };
+      return { reservation: await store.createReservation({ name, phone, email, date, time, people, notes }, client) };
     });
+  } catch (err) {
+    // Red de seguridad por si el índice único salta antes que la comprobación.
+    if (err.code === store.UNIQUE_VIOLATION) {
+      const dup = await store.findActiveByPhone(phone, date);
+      return res.status(409).json(duplicate(dup ? dup.id : ''));
+    }
+    throw err;
   }
 
-  const r = store.createReservation({ name, phone, email, date, time, people, notes });
+  if (outcome.conflict) return res.status(409).json(outcome.conflict);
+
+  const r = outcome.reservation;
   console.log(`Nueva reserva ${r.id}: ${r.date} ${r.time}, ${r.people} pers.`);
   res.status(201).json(publicView(r));
 });
 
-app.get('/api/reservations/:id', (req, res) => {
-  const r = store.getReservation(normalizeCode(req.params.id));
+app.get('/api/reservations/:id', async (req, res) => {
+  const r = await store.getReservation(normalizeCode(req.params.id));
   if (!r) return res.status(404).json({ error: 'No encontramos una reserva con ese código.' });
   res.json(publicView(r));
 });
@@ -150,7 +169,7 @@ app.get('/api/reservations/:id', (req, res) => {
 // QR del menú. Con ?mesa=N el menú muestra el número de mesa.
 app.get('/qr/menu.:ext', async (req, res) => {
   const mesa = Number.parseInt(req.query.mesa, 10);
-  const url = baseUrl(req) + '/menu' + (mesa > 0 && mesa < 1000 ? `?mesa=${mesa}` : '');
+  const url = (await baseUrl(req)) + '/menu' + (mesa > 0 && mesa < 1000 ? `?mesa=${mesa}` : '');
   const opts = { margin: 1, errorCorrectionLevel: 'M', color: { dark: '#2A1E18', light: '#FFFFFF' } };
 
   if (req.params.ext === 'svg') {
@@ -165,20 +184,35 @@ app.get('/qr/menu.:ext', async (req, res) => {
 
 // --- Autenticación del panel ----------------------------------------------
 
-const SECRET = store.sessionSecret();
-// La contraseña entra en la firma: si se cambia ADMIN_PASSWORD, las sesiones abiertas caducan.
-const sign = (payload) => crypto.createHmac('sha256', SECRET + ADMIN_PASSWORD).update(payload).digest('base64url');
-
-function issueToken() {
-  const exp = String(Date.now() + TOKEN_TTL_MS);
-  return `${exp}.${sign(exp)}`;
+// El secreto vive en la base y se cachea por instancia: así no se consulta en
+// cada petición, pero todas las instancias firman igual y un token emitido por
+// una vale en las demás. Se guarda la promesa para que dos peticiones a la vez
+// no disparen dos lecturas.
+let secretPromise = null;
+function sessionSecret() {
+  if (!secretPromise) {
+    secretPromise = store.sessionSecret().catch((err) => {
+      secretPromise = null;
+      throw err;
+    });
+  }
+  return secretPromise;
 }
 
-function validToken(token) {
+// La contraseña entra en la firma: si se cambia ADMIN_PASSWORD, las sesiones abiertas caducan.
+const sign = async (payload) =>
+  crypto.createHmac('sha256', (await sessionSecret()) + ADMIN_PASSWORD).update(payload).digest('base64url');
+
+async function issueToken() {
+  const exp = String(Date.now() + TOKEN_TTL_MS);
+  return `${exp}.${await sign(exp)}`;
+}
+
+async function validToken(token) {
   const [exp, sig] = String(token || '').split('.');
   if (!exp || !sig) return false;
   const a = Buffer.from(sig);
-  const b = Buffer.from(sign(exp));
+  const b = Buffer.from(await sign(exp));
   return a.length === b.length && crypto.timingSafeEqual(a, b) && Number(exp) > Date.now();
 }
 
@@ -192,7 +226,7 @@ function sameSecret(a, b) {
 const loginFailures = new Map();
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   const ip = req.ip;
   const entry = loginFailures.get(ip);
   if (entry && entry.count >= 10 && Date.now() - entry.first < LOGIN_WINDOW_MS) {
@@ -204,31 +238,31 @@ app.post('/api/admin/login', (req, res) => {
     return res.status(401).json({ error: 'Contraseña incorrecta.' });
   }
   loginFailures.delete(ip);
-  res.json({ token: issueToken() });
+  res.json({ token: await issueToken() });
 });
 
 // --- API del panel --------------------------------------------------------
 
 const admin = express.Router();
 
-admin.use((req, res, next) => {
+admin.use(async (req, res, next) => {
   const header = req.get('authorization') || '';
-  if (!validToken(header.startsWith('Bearer ') ? header.slice(7) : '')) {
+  if (!(await validToken(header.startsWith('Bearer ') ? header.slice(7) : ''))) {
     return res.status(401).json({ error: 'Tu sesión expiró. Ingresa de nuevo.' });
   }
   next();
 });
 
-admin.get('/summary', (req, res) => {
+admin.get('/summary', async (req, res) => {
   const today = now().date;
-  res.json({ today, ...store.summary(today, addDays(today, 6)) });
+  res.json({ today, ...(await store.summary(today, addDays(today, 6))) });
 });
 
-admin.get('/reservations', (req, res) => {
+admin.get('/reservations', async (req, res) => {
   const { date, scope = 'upcoming', status, q } = req.query;
   if (date && !isDate(date)) return res.status(400).json({ error: 'Fecha no válida.' });
   if (status && !store.STATUSES.includes(status)) return res.status(400).json({ error: 'Estado no válido.' });
-  const list = store.listReservations({
+  const list = await store.listReservations({
     date: date || null,
     scope,
     status: status || null,
@@ -238,12 +272,12 @@ admin.get('/reservations', (req, res) => {
   res.json(list.map(adminView));
 });
 
-admin.patch('/reservations/:id', (req, res) => {
+admin.patch('/reservations/:id', async (req, res) => {
   const { status, paymentRef } = req.body || {};
   if (status !== undefined && !store.STATUSES.includes(status)) {
     return res.status(400).json({ error: 'Estado no válido.' });
   }
-  const r = store.updateReservation(normalizeCode(req.params.id), {
+  const r = await store.updateReservation(normalizeCode(req.params.id), {
     status,
     paymentRef: paymentRef === undefined ? undefined : clean(paymentRef, 120),
   });
@@ -251,29 +285,30 @@ admin.patch('/reservations/:id', (req, res) => {
   res.json(adminView(r));
 });
 
-admin.get('/availability', (req, res) => {
+admin.get('/availability', async (req, res) => {
   const { date } = req.query;
   if (!isDate(date)) return res.status(400).json({ error: 'Fecha no válida.' });
-  res.json(dayAvailability(date, { includeExtra: true }));
+  res.json(await dayAvailability(date, { includeExtra: true }));
 });
 
 // { date, time: 'HH:MM' | '*', blocked: boolean }
-admin.put('/blocks', (req, res) => {
+admin.put('/blocks', async (req, res) => {
   const { date, time, blocked } = req.body || {};
   if (!isDate(date) || !(time === '*' || isTime(time))) {
     return res.status(400).json({ error: 'Fecha u hora no válida.' });
   }
-  store.setBlocked(date, time, Boolean(blocked));
-  res.json(dayAvailability(date, { includeExtra: true }));
+  await store.setBlocked(date, time, Boolean(blocked));
+  res.json(await dayAvailability(date, { includeExtra: true }));
 });
 
-admin.get('/settings', (req, res) => {
-  res.json({ settings: store.getSettings(), menuUrl: baseUrl(req) + '/menu' });
+admin.get('/settings', async (req, res) => {
+  const settings = await store.getSettings();
+  res.json({ settings, menuUrl: (await baseUrl(req, settings)) + '/menu' });
 });
 
-admin.put('/settings', (req, res) => {
+admin.put('/settings', async (req, res) => {
   const b = req.body || {};
-  const cfg = store.getSettings();
+  const cfg = await store.getSettings();
   const int = (v, min, max, label) => {
     const n = Number.parseInt(v, 10);
     if (!Number.isInteger(n) || n < min || n > max) throw new Error(`${label}: debe estar entre ${min} y ${max}.`);
@@ -310,8 +345,8 @@ admin.put('/settings', (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 
-  store.saveSettings(cfg);
-  res.json({ settings: cfg, menuUrl: baseUrl(req) + '/menu' });
+  await store.saveSettings(cfg);
+  res.json({ settings: cfg, menuUrl: (await baseUrl(req, cfg)) + '/menu' });
 });
 
 app.use('/api/admin', admin);
@@ -326,7 +361,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Ocurrió un error en el servidor.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Plaza Galilea lista en http://localhost:${PORT}`);
-  console.log(`Panel administrativo: http://localhost:${PORT}/admin`);
-});
+// En local (`npm start`) levanta el servidor. En Vercel no: allí el módulo se
+// importa desde api/index.js y es la plataforma quien atiende las peticiones.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Plaza Galilea lista en http://localhost:${PORT}`);
+    console.log(`Panel administrativo: http://localhost:${PORT}/admin`);
+  });
+}
+
+module.exports = app;

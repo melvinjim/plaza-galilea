@@ -4,12 +4,14 @@ Página web de Plaza Galilea (Olivia y Ramón Café, Bulevar Santa Bárbara). Ti
 
 ## Cómo correrlo
 
-Requiere **Node.js 22.13 o superior** (usa `node:sqlite`, que viene incluido; no hay que instalar una base de datos).
+Requiere **Node.js 22.13 o superior** y una base de datos **PostgreSQL**. La más rápida de conseguir es un proyecto gratuito en [Supabase](https://supabase.com) (no pide tarjeta).
 
 ```bash
 npm install
-npm start
+DATABASE_URL="postgres://..." npm start
 ```
+
+Las tablas se crean solas la primera vez.
 
 | Página | URL |
 | --- | --- |
@@ -25,10 +27,11 @@ Contraseña del panel por defecto: `galilea2026`. **Cámbiala** con la variable 
 
 | Variable | Para qué | Por defecto |
 | --- | --- | --- |
+| `DATABASE_URL` | **Obligatoria.** Cadena de conexión de PostgreSQL | — |
 | `PORT` | Puerto del servidor | `3000` |
 | `ADMIN_PASSWORD` | Contraseña del panel | `galilea2026` |
 | `WHATSAPP` | WhatsApp del restaurante si no se ha guardado otro en el panel | `573152337931` (315 233 7931) |
-| `DATA_DIR` | Carpeta donde se guarda la base de datos (`galilea.db`) | `./data` |
+| `PG_POOL_MAX` | Conexiones máximas por instancia | `3` |
 
 ## Flujo de reservas (lo acordado con el dueño)
 
@@ -77,26 +80,26 @@ Contraseña del panel por defecto: `galilea2026`. **Cámbiala** con la variable 
 ## Estructura
 
 ```
-server.js              API y servidor de archivos
-lib/store.js           Base de datos SQLite (reservas, bloqueos, configuración)
+server.js              API y servidor de archivos (exporta la app de Express)
+api/index.js           Punto de entrada en Vercel
+lib/store.js           Base de datos PostgreSQL (reservas, bloqueos, configuración)
 lib/availability.js    Cálculo de horas disponibles
 lib/time.js            Fechas en hora de Colombia (UTC-5)
 public/                Páginas (HTML, CSS y JS sin compilación)
 public/data/menu.json  Contenido del menú
-data/galilea.db        Base de datos (se crea sola; no se sube a git)
 ```
 
 ## Para publicarlo
 
-Sirve cualquier hosting que corra Node **22.13 o superior** y tenga **disco persistente**:
+Al guardar los datos en PostgreSQL y no en disco, sirve tanto un hosting normal como uno serverless.
 
-1. Define `ADMIN_PASSWORD` y, si el disco persistente está en otra ruta, `DATA_DIR`.
-2. `npm install && npm start`.
-3. En el panel, escribe la **dirección pública** y el **WhatsApp**, y vuelve a imprimir los QR.
+**En Vercel** (`vercel.json` y `api/index.js` ya están listos): importa el repo y define `DATABASE_URL` y `ADMIN_PASSWORD` en *Settings → Environment Variables*. Vercel sirve `public/` desde su CDN y manda el resto a Express.
 
-El repo trae un blueprint listo para Render (`render.yaml`): crea el servicio, monta el disco en `/var/data` y pide la `ADMIN_PASSWORD` al desplegar.
+**En un servidor normal** (Render, Railway, un VPS): define las mismas variables y `npm start`. Ya no hace falta disco persistente.
 
-> **No sirve en Vercel, Netlify ni similares.** Son serverless: no hay proceso permanente y el disco es de solo lectura y efímero, así que `node:sqlite` no puede guardar nada. Las reservas se perderían.
+Después, en el panel escribe la **dirección pública** y el **WhatsApp**, y vuelve a imprimir los QR.
+
+> Con Supabase usa la cadena del **Transaction pooler**, no la conexión directa: en serverless cada instancia abre su propia pool y la conexión directa se queda sin cupo.
 
 ## Pendiente para una siguiente versión
 
