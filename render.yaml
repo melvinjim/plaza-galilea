@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: plaza-galilea
+    runtime: node
+    branch: main
+
+    # El plan gratuito NO admite disco persistente, y sin disco las
+    # reservas se borran en cada redespliegue. Este es el más pequeño
+    # con disco; a la app le sobra con 512 MB.
+    plan: 0.5c-512mb
+
+    # Ohio es la región más cercana a Colombia (las otras son Oregon,
+    # Virginia, Frankfurt y Singapur). No se puede cambiar después sin
+    # recrear el servicio.
+    region: ohio
+
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+
+    envVars:
+      # node:sqlite necesita Node 22.13 o superior.
+      - key: NODE_VERSION
+        value: "24"
+
+      # Debe coincidir con disk.mountPath.
+      - key: DATA_DIR
+        value: /var/data
+
+      # Render la pide al crear el blueprint; no queda escrita en el repo.
+      - key: ADMIN_PASSWORD
+        sync: false
+
+    # Aquí vive galilea.db. Sobrevive a los redespliegues.
+    disk:
+      name: galilea-data
+      mountPath: /var/data
+      sizeGB: 1

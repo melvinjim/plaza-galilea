@@ -88,11 +88,15 @@ data/galilea.db        Base de datos (se crea sola; no se sube a git)
 
 ## Para publicarlo
 
-Sirve cualquier hosting que corra Node y tenga disco persistente (Railway, Render con disco, un VPS, etc.):
+Sirve cualquier hosting que corra Node **22.13 o superior** y tenga **disco persistente**:
 
 1. Define `ADMIN_PASSWORD` y, si el disco persistente está en otra ruta, `DATA_DIR`.
 2. `npm install && npm start`.
 3. En el panel, escribe la **dirección pública** y el **WhatsApp**, y vuelve a imprimir los QR.
+
+El repo trae un blueprint listo para Render (`render.yaml`): crea el servicio, monta el disco en `/var/data` y pide la `ADMIN_PASSWORD` al desplegar.
+
+> **No sirve en Vercel, Netlify ni similares.** Son serverless: no hay proceso permanente y el disco es de solo lectura y efímero, así que `node:sqlite` no puede guardar nada. Las reservas se perderían.
 
 ## Pendiente para una siguiente versión
 
