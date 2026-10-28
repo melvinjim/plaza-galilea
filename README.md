@@ -31,7 +31,7 @@ Contraseña del panel por defecto: `galilea2026`. **Cámbiala** con la variable 
 | `PORT` | Puerto del servidor | `3000` |
 | `ADMIN_PASSWORD` | Contraseña del panel | `galilea2026` |
 | `WHATSAPP` | WhatsApp del restaurante si no se ha guardado otro en el panel | `573152337931` (315 233 7931) |
-| `PG_POOL_MAX` | Conexiones máximas por instancia | `3` |
+| `PG_POOL_MAX` | Conexiones máximas por instancia | `1` |
 
 ## Flujo de reservas (lo acordado con el dueño)
 
