@@ -5,8 +5,8 @@
   "description": "MVP web de Plaza Galilea: reservas, panel administrativo y menú con QR",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js"
   },
   "engines": {
     "node": ">=22.13"
