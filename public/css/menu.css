@@ -1,0 +1,239 @@
+body.menu-page {
+  background: #f8f2e8;
+}
+
+.menu-top {
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-top .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 68px;
+}
+
+.table-badge {
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--terra);
+  color: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+.menu-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(248, 242, 232, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-tabs .container {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+}
+
+.menu-tabs .container::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-tab {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink-2);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.menu-tab[aria-selected='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.menu-body {
+  max-width: 760px;
+  padding-top: 34px;
+  padding-bottom: 60px;
+}
+
+.menu-group-head {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.menu-group-head h1 {
+  font-size: clamp(2.6rem, 10vw, 3.6rem);
+  letter-spacing: 0.08em;
+  color: var(--accent, var(--orange));
+  margin-bottom: 0;
+}
+
+.menu-group-head p {
+  font-family: var(--font-script);
+  font-size: 1.9rem;
+  color: var(--olive);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.menu-section {
+  margin-top: 38px;
+}
+
+.menu-section h2 {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 2.6rem;
+  color: var(--accent, var(--orange));
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.menu-section .section-note {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  max-width: 52ch;
+  margin: 0 auto 12px;
+}
+
+.menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.menu-item {
+  padding: 16px 18px;
+}
+
+.menu-item + .menu-item {
+  border-top: 1px solid #f0e7da;
+}
+
+.menu-item-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.menu-item-name {
+  font-family: var(--font-display);
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.menu-item-head .dots {
+  flex: 1;
+  border-bottom: 2px dotted #dccdb9;
+  transform: translateY(-4px);
+  min-width: 16px;
+}
+
+.menu-item-price {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.menu-item-desc {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+
+.menu-flags {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.flag {
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.flag-star {
+  background: #fdebd9;
+  color: #b2561a;
+}
+
+.flag-spicy {
+  background: #fde2dc;
+  color: #b0301c;
+}
+
+.flag-tag {
+  background: #ece8db;
+  color: var(--olive);
+}
+
+.lunch-intro {
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lunch-intro .amount {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #f0b48a;
+}
+
+.lunch-intro ul {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.menu-legend {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.menu-legend strong {
+  color: var(--terra);
+}
+
+.menu-cta {
+  margin-top: 28px;
+  text-align: center;
+}

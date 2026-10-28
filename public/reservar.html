@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reservar mesa · Plaza Galilea</title>
+  <meta name="theme-color" content="#b04a26">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">
+        <span class="brand-badge"><small>PLAZA</small>GALILEA</span>
+        <span class="brand-name">Plaza Galilea<small>Plaza gastronómica</small></span>
+      </a>
+      <button class="nav-toggle" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="site-nav" id="site-nav">
+        <a href="/">Inicio</a>
+        <a href="/menu">Menú</a>
+        <a href="/reserva">Mi reserva</a>
+        <a class="btn btn-primary btn-sm" href="/reservar" aria-current="page">Reservar mesa</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="booking-view">
+      <div class="page-head">
+        <span class="eyebrow">Reservas</span>
+        <h1>Reserva tu mesa</h1>
+        <p>Elige día, hora y cuántas personas vienen. Al terminar recibes un código: envíalo por WhatsApp para hacer el abono y confirmar tu reserva.</p>
+      </div>
+
+      <form class="booking" id="booking-form" novalidate>
+        <div class="card">
+          <section class="booking-step">
+            <h2><span class="num">1</span> ¿Qué día?</h2>
+            <div class="date-strip" id="date-strip" role="group" aria-label="Próximos días"></div>
+            <label class="other-date">
+              Otra fecha
+              <input class="input" type="date" id="other-date">
+            </label>
+          </section>
+
+          <section class="booking-step">
+            <h2><span class="num">2</span> ¿Cuántas personas?</h2>
+            <div class="stepper">
+              <button type="button" id="people-minus" aria-label="Menos personas">−</button>
+              <output id="people-out" aria-live="polite">2 personas</output>
+              <button type="button" id="people-plus" aria-label="Más personas">+</button>
+            </div>
+            <p class="hint muted" id="people-hint" style="margin:10px 0 0;font-size:.85rem" hidden></p>
+          </section>
+
+          <section class="booking-step">
+            <h2><span class="num">3</span> ¿A qué hora?</h2>
+            <div id="slots" aria-live="polite"><div class="spinner"></div></div>
+          </section>
+
+          <section class="booking-step">
+            <h2><span class="num">4</span> Tus datos</h2>
+            <div class="field-row">
+              <div class="field">
+                <label for="name">Nombre completo</label>
+                <input id="name" name="name" autocomplete="name" maxlength="80" required>
+              </div>
+              <div class="field">
+                <label for="phone">Celular (WhatsApp)</label>
+                <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="300 123 4567" required>
+              </div>
+            </div>
+            <div class="field">
+              <label for="email">Correo <span class="muted">(opcional)</span></label>
+              <input id="email" name="email" type="email" autocomplete="email" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="notes">Comentarios <span class="muted">(opcional)</span></label>
+              <textarea id="notes" name="notes" maxlength="300" placeholder="¿Cumpleaños, aniversario, silla para bebé, alguna alergia?"></textarea>
+            </div>
+            <div class="honeypot" aria-hidden="true">
+              <label>No llenar <input name="website" tabindex="-1" autocomplete="off"></label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="card summary">
+          <h3>Tu reserva</h3>
+          <dl>
+            <div><dt>Día</dt><dd id="sum-date">—</dd></div>
+            <div><dt>Hora</dt><dd id="sum-time">—</dd></div>
+            <div><dt>Personas</dt><dd id="sum-people">2</dd></div>
+          </dl>
+          <div class="alert alert-error" id="form-error" role="alert" hidden></div>
+          <button class="btn btn-primary btn-block" type="submit" id="submit-btn">Solicitar reserva</button>
+          <p class="note">La reserva queda <strong>pendiente</strong> hasta que recibamos el abono por WhatsApp.</p>
+        </aside>
+      </form>
+    </div>
+
+    <div id="success-view" hidden></div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/reservar.js"></script>
+</body>
+</html>

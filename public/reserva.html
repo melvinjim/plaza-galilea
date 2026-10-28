@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consultar reserva · Plaza Galilea</title>
+  <meta name="theme-color" content="#b04a26">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">
+        <span class="brand-badge"><small>PLAZA</small>GALILEA</span>
+        <span class="brand-name">Plaza Galilea<small>Plaza gastronómica</small></span>
+      </a>
+      <button class="nav-toggle" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="site-nav" id="site-nav">
+        <a href="/">Inicio</a>
+        <a href="/menu">Menú</a>
+        <a href="/reserva" aria-current="page">Mi reserva</a>
+        <a class="btn btn-primary btn-sm" href="/reservar">Reservar mesa</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-head" style="text-align:center">
+      <span class="eyebrow">Mi reserva</span>
+      <h1>Consulta tu reserva</h1>
+      <p style="margin:0 auto">Escribe el código que recibiste al reservar (por ejemplo <span class="mono">GAL-7K3QH</span>).</p>
+    </div>
+
+    <div class="lookup">
+      <form id="lookup-form">
+        <label class="visually-hidden" for="code">Código de reserva</label>
+        <input class="input" id="code" placeholder="GAL-XXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12">
+        <button class="btn btn-primary" type="submit">Consultar</button>
+      </form>
+      <div class="recent" id="recent" hidden></div>
+    </div>
+
+    <div id="result" aria-live="polite"></div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/consultar.js"></script>
+</body>
+</html>

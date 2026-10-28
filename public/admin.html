@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Panel · Plaza Galilea</title>
+  <meta name="theme-color" content="#2a1e18">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <!-- Ingreso -->
+  <section class="login" id="login-view" hidden>
+    <form class="card login-card" id="login-form">
+      <span class="brand-badge" style="width:64px;height:64px;font-size:.8rem;margin:0 auto 14px"><small>PLAZA</small>GALILEA</span>
+      <h1>Panel administrativo</h1>
+      <p class="muted">Ingresa la contraseña del restaurante.</p>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="alert alert-error" id="login-error" hidden></div>
+      <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <!-- Panel -->
+  <div id="app-view" hidden>
+    <header class="admin-bar">
+      <div class="admin-bar-inner">
+        <a class="brand" href="/" target="_blank" rel="noopener">
+          <span class="brand-badge"><small>PLAZA</small>GALILEA</span>
+          <span class="brand-name" style="color:#fff">Panel<small>Plaza Galilea</small></span>
+        </a>
+        <nav class="admin-tabs" role="tablist">
+          <button role="tab" data-tab="reservas" aria-selected="true">Reservas <span class="tab-count" id="tab-count" hidden></span></button>
+          <button role="tab" data-tab="disponibilidad" aria-selected="false">Disponibilidad</button>
+          <button role="tab" data-tab="qr" aria-selected="false">Menú QR</button>
+          <button role="tab" data-tab="config" aria-selected="false">Configuración</button>
+        </nav>
+        <button class="btn btn-sm btn-outline-light" id="logout">Salir</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <!-- RESERVAS -->
+      <section data-panel="reservas">
+        <div class="panel-head">
+          <h2>Reservas</h2>
+          <p class="muted">Aquí llegan las reservas que hacen los clientes en la página. Cuando el cliente te pague por WhatsApp, busca su código y toca <strong>Pago recibido · Confirmar</strong>.</p>
+        </div>
+        <div class="stats" id="stats"></div>
+
+        <div class="toolbar">
+          <div class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input class="input" id="f-q" placeholder="Buscar por código, nombre o celular" autocomplete="off">
+          </div>
+          <div class="segmented" id="f-status" role="group" aria-label="Estado">
+            <button data-v="pendiente" aria-pressed="true">Por confirmar</button>
+            <button data-v="confirmada" aria-pressed="false">Confirmadas</button>
+            <button data-v="cancelada" aria-pressed="false">Canceladas</button>
+            <button data-v="" aria-pressed="false">Todas</button>
+          </div>
+          <div class="toolbar-group">
+            <select class="input" id="f-scope" aria-label="Periodo">
+              <option value="upcoming">Próximas</option>
+              <option value="past">Pasadas</option>
+              <option value="all">Todas las fechas</option>
+            </select>
+            <input class="input" type="date" id="f-date" aria-label="Fecha exacta">
+            <button class="btn btn-ghost btn-sm" id="f-clear" hidden>Quitar fecha</button>
+          </div>
+        </div>
+
+        <div id="res-list" class="res-list"><div class="spinner"></div></div>
+      </section>
+
+      <!-- DISPONIBILIDAD -->
+      <section data-panel="disponibilidad" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Disponibilidad</h2>
+            <p class="muted">Cuando el local esté lleno, marca la hora como <strong>llena</strong>: los clientes ya no podrán reservar en esa franja. Vuelve a abrirla cuando se desocupe.</p>
+          </div>
+        </div>
+
+        <div class="day-nav">
+          <button class="btn btn-ghost btn-sm" id="av-prev" aria-label="Día anterior">‹</button>
+          <input class="input" type="date" id="av-date">
+          <button class="btn btn-ghost btn-sm" id="av-next" aria-label="Día siguiente">›</button>
+          <button class="btn btn-ghost btn-sm" id="av-today">Hoy</button>
+        </div>
+
+        <div class="card day-card">
+          <div class="day-card-head">
+            <div>
+              <h3 id="av-title">—</h3>
+              <div id="av-badge"></div>
+            </div>
+            <button class="btn btn-sm" id="av-day-toggle"></button>
+          </div>
+          <div class="legend">
+            <span><i class="lg lg-free"></i>Disponible</span>
+            <span><i class="lg lg-blocked"></i>Marcada como llena</span>
+            <span><i class="lg lg-auto"></i>Cupo completo (automático)</span>
+            <span><i class="lg lg-past"></i>Ya pasó</span>
+          </div>
+          <div class="slot-grid" id="av-slots"></div>
+        </div>
+
+        <h3 style="margin-top:28px">Reservas de este día</h3>
+        <div id="av-res" class="res-list"></div>
+      </section>
+
+      <!-- QR -->
+      <section data-panel="qr" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Menú con QR</h2>
+            <p class="muted">Imprime el QR y ponlo en las mesas. Al escanearlo, el cliente abre el menú digital.</p>
+          </div>
+        </div>
+        <div class="qr-layout">
+          <div class="card qr-card">
+            <img id="qr-img" alt="Código QR del menú" width="260" height="260">
+            <p class="mono qr-url" id="qr-url"></p>
+            <div class="alert alert-info" id="qr-warning" hidden>
+              Este QR apunta a <strong>localhost</strong> y solo funciona en este computador. Cuando publiques la página, escribe la dirección pública en <strong>Configuración</strong>.
+            </div>
+            <div class="qr-actions">
+              <a class="btn btn-primary" href="/qr/menu.png?download=1" download>Descargar PNG</a>
+              <a class="btn btn-ghost" href="/menu" target="_blank" rel="noopener">Abrir menú</a>
+            </div>
+          </div>
+          <div class="card">
+            <h3>QR por mesa</h3>
+            <p class="muted">Genera una hoja para imprimir con un QR por mesa. El menú mostrará el número de mesa.</p>
+            <div class="field-row">
+              <div class="field">
+                <label for="qr-from">Desde la mesa</label>
+                <input id="qr-from" type="number" min="1" max="200" value="1">
+              </div>
+              <div class="field">
+                <label for="qr-to">Hasta la mesa</label>
+                <input id="qr-to" type="number" min="1" max="200" value="12">
+              </div>
+            </div>
+            <button class="btn btn-primary" id="qr-print">Generar hoja para imprimir</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONFIGURACIÓN -->
+      <section data-panel="config" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Configuración</h2>
+            <p class="muted">Horario de reservas, contacto y límites.</p>
+          </div>
+        </div>
+        <form id="config-form" class="config-grid">
+          <div class="card">
+            <h3>Contacto</h3>
+            <div class="field">
+              <label for="c-whatsapp">WhatsApp del restaurante</label>
+              <input id="c-whatsapp" inputmode="tel" placeholder="573001234567">
+              <span class="hint">Con indicativo de país y sin espacios (57 + número). Los clientes envían aquí su código de reserva.</span>
+            </div>
+            <div class="field">
+              <label for="c-url">Dirección pública de la página</label>
+              <input id="c-url" placeholder="https://galileaplaza.com">
+              <span class="hint">Se usa para el QR del menú. Déjala vacía mientras pruebas en este computador.</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Reglas de reserva</h3>
+            <div class="field-row">
+              <div class="field">
+                <label for="c-slot">Cada cuánto hay una hora</label>
+                <select id="c-slot">
+                  <option value="15">15 min</option>
+                  <option value="30">30 min</option>
+                  <option value="60">1 hora</option>
+                  <option value="90">1 h 30 min</option>
+                  <option value="120">2 horas</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="c-advance">Anticipación mínima (min)</label>
+                <input id="c-advance" type="number" min="0" max="2880">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="c-days">Reservar hasta (días a futuro)</label>
+                <input id="c-days" type="number" min="1" max="365">
+              </div>
+              <div class="field">
+                <label for="c-people">Máx. personas por reserva</label>
+                <input id="c-people" type="number" min="1" max="200">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c-perslot">Máx. reservas por hora</label>
+              <input id="c-perslot" type="number" min="0" max="500">
+              <span class="hint">0 = sin límite automático: tú decides cuándo marcar una hora como llena.</span>
+            </div>
+          </div>
+
+          <div class="card config-hours">
+            <h3>Horario de reservas</h3>
+            <p class="muted" style="font-size:.88rem">Primera y última hora a la que se puede reservar cada día.</p>
+            <div id="c-hours"></div>
+          </div>
+
+          <div class="config-save">
+            <div class="alert alert-error" id="config-error" hidden></div>
+            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="modal" id="modal">
+    <form method="dialog" id="modal-form">
+      <h3 id="modal-title"></h3>
+      <div id="modal-body"></div>
+      <div class="field" id="modal-field" hidden>
+        <label for="modal-input" id="modal-label"></label>
+        <input id="modal-input" autocomplete="off" maxlength="120">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="modal-cancel">Volver</button>
+        <button class="btn btn-primary" value="ok" id="modal-ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

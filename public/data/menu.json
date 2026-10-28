@@ -1,0 +1,234 @@
+{
+  "updated": "2026-06-02",
+  "allergyNote": "Si padeces de alguna alergia, comunícalo a nuestros colaboradores.",
+  "groups": [
+    {
+      "id": "olivia",
+      "label": "Olivia",
+      "subtitle": "Pizzería contemporánea",
+      "sections": [
+        {
+          "title": "Entradas",
+          "items": [
+            { "name": "Papas trufadas", "price": 27000, "star": 1, "desc": "Papas delgadas, aceite de trufa, parmesano, cebollín, salsa de ajo dulce Aderezzi." },
+            { "name": "Chorizo en panela", "price": 32000, "star": 1, "desc": "Papas delgadas, mozzarella, chorizo en reducción de panela y naranja, cebollín." },
+            { "name": "Serrano fries", "price": 33000, "star": 1, "desc": "Papas delgadas, parmesano madurado, jamón serrano, stracciatella, cebollín." },
+            { "name": "Stracciatella dip", "price": 30000, "desc": "Untable de stracciatella, aceite de oliva, miel, pistacho, acompañado de pan focaccia." },
+            { "name": "Serrano rolls", "price": 34000, "desc": "Di búfala, pesto pistacho, rúgula, tomate cherry, envoltorio de jamón serrano. Balsámico y aceite de oliva." },
+            { "name": "Montaditos", "price": 26000, "star": 1, "desc": "Focaccia, pesto pistacho, stracciatella, jamón serrano, tomate cherry. 5 unidades." },
+            { "name": "Fundido champiñón", "price": 30000, "desc": "Con salsa blanca, mozzarella y stracciatella, acompañado de pan focaccia." },
+            { "name": "Fundido maduro", "price": 30000, "desc": "Maduro guayabo, queso mozzarella, panceta, acompañado de pan focaccia." },
+            { "name": "Fundido de pollo", "price": 30000, "desc": "En salsa blanca, mozzarella, orégano, acompañado de pan focaccia." },
+            { "name": "Mozzarella sticks", "price": 29000, "desc": "Palitos de mozzarella apanados, salsa napolitana, salsa de ajo dulce Aderezzi." }
+          ]
+        },
+        {
+          "title": "Platos fuertes",
+          "items": [
+            { "name": "Boloñesa", "price": 35000, "desc": "Ragú de boloñesa, fettuccine, stracciatella, parmesano madurado." },
+            { "name": "Pollo pesto", "price": 36000, "desc": "Pollo en cubos, fettuccine en pesto pistacho, stracciatella, parmesano madurado, tomate cherry." },
+            { "name": "Pollo alfredo", "price": 35000, "desc": "Pollo en cubos, fettuccine en alfredo, parmesano madurado, tomate cherry." },
+            { "name": "Osobuco y balsámico", "price": 56000, "star": 1, "desc": "Osobuco horneado durante 8 horas, glaseado en reducción de balsámico sobre una cama de fettuccine al burro y ensalada." },
+            { "name": "Milanesa napolitana", "price": 42000, "star": 1, "desc": "Pollo en panko, salsa napolitana, mozzarella, papa amarilla, salsa de ajo Aderezzi, ensalada." },
+            { "name": "Salmón y fettuccine", "price": 58000, "desc": "180 g de salmón en mantequilla, cama de fettuccine al burro y parmesano madurado, ensalada." },
+            { "name": "Lasagna mixta", "price": 36000, "star": 1, "desc": "Mezcla de ragú boloñesa y pollo en salsa alfredo. Acompañada de focaccia." }
+          ]
+        },
+        {
+          "title": "Pizzas",
+          "note": "Nuestras pizzas son de 35 cm y 6 porciones, ideales para 2 personas o para compartir. Amasamos a mano y cuidamos la masa con fermentación de 48 horas.",
+          "items": [
+            { "name": "Carbonara", "price": 57000, "star": 1, "desc": "Mozzarella, salsa blanca, extra tocineta, extra parmesano." },
+            { "name": "Mil amores", "price": 75000, "star": 2, "desc": "Mozzarella, prosciutto, rúgula, albahaca, parmesano, burrata, pesto pistacho, oliva." },
+            { "name": "Diavola", "price": 62000, "spicy": true, "desc": "Mozzarella, salami, chorizo español, peperoni, queso azul, parmesano, pimienta roja." },
+            { "name": "Miele y stracciata", "price": 54000, "star": 1, "desc": "Stracciatella, peperoni, cebolla morada, miel." },
+            { "name": "Maturo e panceta", "price": 55000, "star": 1, "desc": "Mozzarella, maduro guayabo, panceta, parmesano." },
+            { "name": "Manzana verde", "price": 50000, "desc": "Mozzarella, manzana verde, miel, queso azul, parmesano, balsámico." },
+            { "name": "Caramella", "price": 52000, "desc": "Mozzarella, piña en panela, jamón York, cacao en polvo." },
+            { "name": "Peperoni piña", "price": 55000, "desc": "Mozzarella, peperoni, piña en panela, parmesano." },
+            { "name": "Al canto e funghi", "price": 55000, "desc": "Mozzarella, pollo, champiñón, miel, parmesano, albahaca." },
+            { "name": "La cabra", "price": 50000, "desc": "Mozzarella, provolone, queso azul, parmesano madurado, balsámico." }
+          ]
+        },
+        {
+          "title": "Sándwiches",
+          "note": "Incluyen papas francesas y salsa de ajo Aderezzi.",
+          "items": [
+            { "name": "Pistacho", "price": 40000, "star": 1, "desc": "Focaccia, jamón York, stracciatella, pistacho triturado, parmesano." },
+            { "name": "Diavolo", "price": 40000, "star": 1, "desc": "Focaccia, napolitana, mozzarella, peperoni, salami, chorizo español." },
+            { "name": "Pollo pesto", "price": 41000, "desc": "Focaccia, rúgula, pollo en pesto pistacho, stracciatella, tomate cherry." },
+            { "name": "Milanesa", "price": 40000, "star": 1, "desc": "Focaccia, salsa de ajo, pollo en panko, mozzarella, lechuga y aderezo césar, tomate cherry." },
+            { "name": "Di pollo", "price": 39000, "desc": "Focaccia, jamón York, pollo en salsa blanca, mozzarella, orégano." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bebidas",
+      "label": "Bebidas y bar",
+      "subtitle": "Sodas, vinos, limonadas y Olivia Bar",
+      "sections": [
+        {
+          "title": "Olivia Bar",
+          "items": [
+            { "name": "Margarita maracuyá", "price": 29000, "star": 1, "tag": "Granizado", "desc": "Tequila, triple sec, zumo de limón, zumo de maracuyá, michelado de sal." },
+            { "name": "Mojito de lulo", "price": 28000, "star": 1, "desc": "Bacardí, limón, hierbabuena, zumo de lulo." },
+            { "name": "Paloma", "price": 30000, "star": 1, "desc": "José Cuervo, tónica toronja, zumo de naranja, zumo de limón." },
+            { "name": "Érota", "price": 30000, "star": 1, "tag": "Autor", "desc": "Jack Daniel's Honey, Aperol, espumoso de lulo, frutos del bosque y flor de jamaica." },
+            { "name": "Ifrita", "price": 30000, "star": 1, "tag": "Autor", "desc": "Tequila, triple sec, tabasco, maracuyá, limón." },
+            { "name": "Margarita", "price": 27000, "desc": "Tequila, triple sec, zumo de limón, michelado de sal." },
+            { "name": "Aperol spritz", "price": 35000, "desc": "Aperol, Cinzano, soda, rodaja de naranja." },
+            { "name": "Gin & tonic", "price": 33000, "desc": "Ginebra, tónica, limón." },
+            { "name": "Daiquirí", "price": 20000, "desc": "Bacardí, simple, zumo de limón, michelado de azúcar." }
+          ]
+        },
+        {
+          "title": "Vinos",
+          "items": [
+            { "name": "Jarra de sangría 1,2 litros", "price": 120000, "star": 2 },
+            { "name": "Sangría vino tinto", "price": 29000, "star": 1 },
+            { "name": "Limonada de vino", "price": 22000, "star": 1 },
+            { "name": "Sangría vino blanco", "price": 28000 },
+            { "name": "Copa vino blanco 240 ml", "price": 27000 },
+            { "name": "Copa vino tinto 240 ml", "price": 26000 },
+            { "name": "Tinto de verano", "price": 23000 }
+          ]
+        },
+        {
+          "title": "Sodas",
+          "items": [
+            { "name": "Lychee y frutos rojos", "price": 18000, "star": 1 },
+            { "name": "Frutos amarillos", "price": 16000, "star": 1 },
+            { "name": "Frutos rojos", "price": 16000 },
+            { "name": "Tajín y maracuyá", "price": 16000 },
+            { "name": "Soda michelada", "price": 11000 }
+          ]
+        },
+        {
+          "title": "Limonadas",
+          "items": [
+            { "name": "Limonada de coco", "price": 17000, "star": 1 },
+            { "name": "Limonada de lychee", "price": 16000, "star": 1 },
+            { "name": "Limonada cerezada", "price": 15000 },
+            { "name": "Limonada natural", "price": 12000 }
+          ]
+        },
+        {
+          "title": "Cervezas",
+          "note": "2x1 de lunes a jueves.",
+          "items": [
+            { "name": "Stella Artois", "price": 13000 },
+            { "name": "Corona", "price": 13000 },
+            { "name": "Club Colombia", "price": 10000 },
+            { "name": "Águila Light", "price": 10000 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ramon",
+      "label": "Ramón Café",
+      "subtitle": "Café, granizados y postres",
+      "sections": [
+        {
+          "title": "Clásicos",
+          "items": [
+            { "name": "Espresso", "price": 6500 },
+            { "name": "Americano / tinto", "price": 7500 },
+            { "name": "Cortado / macchiato", "price": 9000 },
+            { "name": "Cappuccino", "price": 13000 },
+            { "name": "Cappuccino vainilla", "price": 15000 },
+            { "name": "Cappuccino Nutella", "price": 16000 },
+            { "name": "Cappuccino masmelo", "price": 16000 },
+            { "name": "Cappuccino almendrado", "price": 17000 }
+          ]
+        },
+        {
+          "title": "Granizados",
+          "items": [
+            { "name": "Clásico", "price": 18000, "desc": "Café, leche, arequipe, chantilly." },
+            { "name": "Lulo", "price": 20000, "desc": "Café, leche, lulo triturado, leche condensada." },
+            { "name": "Mocha", "price": 20000, "desc": "Café, leche, Nutella, cocoa, chantilly." }
+          ]
+        },
+        {
+          "title": "Chai",
+          "items": [
+            { "name": "Masala chai", "price": 12000, "desc": "Canela, chai, leche." },
+            { "name": "Dirty chai", "price": 13000, "desc": "Espresso, chai, leche." },
+            { "name": "Choco chai", "price": 14000, "desc": "Nutella, chai, leche, cacao." }
+          ]
+        },
+        {
+          "title": "Latte",
+          "items": [
+            { "name": "Chai latte", "price": 12000, "desc": "Canela, chai, leche." },
+            { "name": "Latte", "price": 13000, "desc": "Espresso y leche." },
+            { "name": "Vainilla latte", "price": 14000, "desc": "Espresso, leche y vainilla." }
+          ]
+        },
+        {
+          "title": "Para acompañar",
+          "items": [
+            { "name": "Croissant stracciatella", "price": 22000, "desc": "Relleno de stracciatella, rúgula, serrano, cherry, pesto, parmesano. Salsa Aderezzi." },
+            { "name": "Croissant pistacho", "price": 22000, "desc": "Relleno de stracciatella, jamón York, crumble de pistacho, pesto, parmesano. Salsa Aderezzi." },
+            { "name": "Canasta de pandebono", "price": 13000, "desc": "10 mini pandebonos, arequipe y mermelada de frutos rojos." },
+            { "name": "Cheesecake de arándanos", "price": 16000 },
+            { "name": "Torta vasca", "price": 16000 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lunch",
+      "label": "Lunch",
+      "subtitle": "Olivia Lunch · 12:00 m. a 3:00 p. m.",
+      "intro": {
+        "price": 30000,
+        "text": "Elige entrada, plato fuerte y bebida.",
+        "extras": ["Fines de semana y festivos: $35.000", "Para llevar: + $3.000"]
+      },
+      "sections": [
+        {
+          "title": "Entrada",
+          "items": [
+            { "name": "Crema de tomate" },
+            { "name": "Crema de espinaca" },
+            { "name": "Crema de zanahoria" },
+            { "name": "Crema de verduras" }
+          ]
+        },
+        {
+          "title": "Plato fuerte",
+          "items": [
+            { "name": "Pasta boloñesa", "desc": "Fettuccine al dente, salsa boloñesa, stracciatella, parmesano." },
+            { "name": "Pasta pollo pesto", "desc": "Fettuccine al dente, pesto de pistacho, filete de pollo, stracciatella, parmesano." },
+            { "name": "Pasta pollo Alfredo", "desc": "Fettuccine al dente, salsa Alfredo, filete de pollo, stracciatella, parmesano." },
+            { "name": "Milanesa de pollo", "desc": "Milanesa de pollo en panko, papa amarilla, salsa Aderezzi, ensalada." },
+            { "name": "Lasagna mixta", "desc": "Mezcla de salsa boloñesa y pollo en salsa Alfredo, acompañada de pan." },
+            { "name": "Pollo y papas", "desc": "Filete de pollo en salsa de reducción, papas a la francesa, salsa Aderezzi, ensalada." },
+            { "name": "Res y papas", "desc": "Filete de res en salsa de reducción, papas a la francesa, salsa Aderezzi, ensalada." }
+          ]
+        },
+        {
+          "title": "Bebida",
+          "items": [
+            { "name": "Soda italiana frutos rojos" },
+            { "name": "Soda italiana frutos amarillos" },
+            { "name": "Soda michelada y zumo de limón" },
+            { "name": "Limonada natural" }
+          ]
+        },
+        {
+          "title": "A la carta",
+          "note": "Incluyen bebida.",
+          "items": [
+            { "name": "Osobuco en reducción de balsámico", "price": 56000, "desc": "Pasta al burro, osobuco horneado durante 8 horas glaseado en balsámico, cebollín y ensalada." },
+            { "name": "Milanesa napolitana", "price": 42000, "desc": "Milanesa de pollo, salsa napolitana, gratinado de mozzarella, papa amarilla, salsa Aderezzi, ensalada." },
+            { "name": "Salmón y fettuccine", "price": 58000, "desc": "180 g de salmón en mantequilla, cama de fettuccine al burro y parmesano madurado, ensalada." }
+          ]
+        }
+      ]
+    }
+  ]
+}
